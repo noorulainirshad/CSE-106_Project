@@ -9,9 +9,32 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="">
         <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+        <link rel="stylesheet" href="../static/style.css">
     </head>
     <body>
-        <p>Under development....</p>
+        
+        <div class="card-holder">
+            <div class="card">
+                <form>
+
+                    <!-- Username input -->
+                    <label for="u_userName"><b>Username</b></label>
+                    <br>
+                    <input type="text" placeholder="Enter Username" name="u_userName" required>
+                    <br>
+                    <br>
+
+                    <!-- Password input-->
+                    <label for="u_password"><b>Password</b></label>
+                    <br>
+                    <input type="text" placeholder="Enter Password" name="u_password" required>
+                    <br>
+
+                    <button type="submit">Login</button>
+
+                </form>
+            </div>
+        </div>
 
         <script src="" async defer></script>
     </body>
