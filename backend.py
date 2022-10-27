@@ -3,7 +3,6 @@ from flask import Flask, redirect, url_for
 from flask import request
 from flask import abort, render_template
 from flask_cors import CORS
-
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -45,10 +44,30 @@ class Enrollment(db.Model):
     e_grade = db.Column(db.Integer, nullable=False)
 
 
+def isValidLogin(username, password):
+    exists = db.session.query(Users.u_userId).filter_by(u_userName=username, u_password=password).first()
+
+    if exists == None:
+        return False
+
+    return True
+
+
 # root directory
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/login', methods=['POST'])
+def login():
+    if request.method == 'POST':
+
+        if isValidLogin(request.json['u_userName'], request.json['u_password']):
+            print('Valid user')
+        else:
+            print('Invalid user')
+
+    return 'validation complete'
 
 if __name__ == '__main__':
     app.run()
