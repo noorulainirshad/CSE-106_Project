@@ -9,8 +9,8 @@ function login() {
         console.log('input fields not filled')
     } else {
         const loginInput = {
-            u_userName: userName,
-            u_password: password
+            username: userName,
+            password: password
         }
 
         fetch('http://127.0.0.1:5000/login', {
