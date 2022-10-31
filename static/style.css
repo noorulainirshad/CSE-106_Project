@@ -1,7 +1,8 @@
 .card-holder{
     /* other base style */
     width: 25%;
-    margin: auto;
+    margin-left: auto;
+    margin-right: auto;
     margin-top: 10%;
     padding: 80px;  
     border-radius: 15px;
@@ -10,4 +11,16 @@
 
 .card {
     text-align: center;
+}
+
+.flash-holder{
+    width: 25%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.flashes {
+    text-align: center;
+    background-color: lightpink;
+    border-radius: 30px;
 }
