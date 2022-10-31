@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, request, abort, render_template, flash, make_response, jsonify
+from flask import Flask, redirect, url_for, request, abort, render_template, flash, make_response
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_manager, LoginManager, login_required, login_user, logout_user, current_user
 from flask_cors import CORS
@@ -65,7 +65,6 @@ def load_user(user_id):
 def index():
     return render_template('login.html')
 
-
 # User Dashboard
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
@@ -76,22 +75,24 @@ def dashboard():
 # Login requests
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    logout_user()
+
     if request.method == 'POST':
 
         user = User.query.filter_by(u_userName=request.json['username']).first()
 
         if user == None:
             print('user not found')
-            #flash('User not found')
+            flash('User does not exist')
         elif not user.check_password(request.json['password']):
             print('Incorrect password')
-            #flash('incorrect password')
+            flash('Incorrect password')
         else:
             login_user(user)
             print('User logged in!!')
             return {"redirect": url_for('dashboard')}
 
-        return render_template('login.html')
+    return {"redirect": url_for('index')}
 
 # Run app
 if __name__ == '__main__':
