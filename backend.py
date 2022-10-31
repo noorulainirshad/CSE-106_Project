@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, request, abort, render_template, flash
+from flask import Flask, redirect, url_for, request, abort, render_template, flash, make_response, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_manager, LoginManager, login_required, login_user, logout_user, current_user
 from flask_cors import CORS
@@ -7,6 +7,7 @@ app = Flask(__name__)
 
 # choose where to store database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
+
 app.config['SECRET_KEY'] = 'place secret key here'
 
 
@@ -49,7 +50,7 @@ class Enrollment(db.Model):
     e_studentId = db.Column(db.Integer, nullable=False)
     e_grade = db.Column(db.Integer, nullable=False)
 
-# Flask Login managment
+# Flask Login management
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
@@ -62,15 +63,15 @@ def load_user(user_id):
 # Root directory
 @app.route('/')
 def index():
-    logout_user()
     return render_template('login.html')
+
 
 # User Dashboard
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
     print('Rendering dashboard..')
-    return '<h1>DASHBOARD</h1>'
+    return render_template('dashboard.html')
 
 # Login requests
 @app.route('/login', methods=['GET', 'POST'])
@@ -88,7 +89,7 @@ def login():
         else:
             login_user(user)
             print('User logged in!!')
-            return redirect(url_for('dashboard'))
+            return {"redirect": url_for('dashboard')}
 
         return render_template('login.html')
 
