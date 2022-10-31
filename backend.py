@@ -1,35 +1,42 @@
-from select import select
-from flask import Flask, redirect, url_for
-from flask import request
-from flask import abort, render_template
-from flask_cors import CORS
+from flask import Flask, redirect, url_for, request, abort, render_template, flash, make_response, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin, login_manager, LoginManager, login_required, login_user, logout_user, current_user
+from flask_cors import CORS
 
 app = Flask(__name__)
 
 # choose where to store database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3' 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
+
+app.config['SECRET_KEY'] = 'place secret key here'
+
 
 # call database
 db = SQLAlchemy(app)
 
 # Student table with student name and grade
-class Users(db.Model):
+class User(db.Model, UserMixin):
     u_userId = db.Column(db.Integer, primary_key=True)
     u_userName = db.Column(db.String, unique=True, nullable=False)
     u_password = db.Column(db.String, nullable=False)
 
-class Teachers(db.Model):
+    def get_id(self):
+        return self.u_userId
+
+    def check_password(self, password):
+        return self.u_password == password
+
+class Teacher(db.Model):
     t_teacherId = db.Column(db.Integer, primary_key=True)
     t_userId = db.Column(db.Integer, unique=True, nullable=False)
     t_name = db.Column(db.String, nullable=False)
 
-class Students(db.Model):
+class Student(db.Model):
     s_studentId = db.Column(db.Integer, primary_key=True)
     s_userId = db.Column(db.Integer, nullable=False)
     s_name = db.Column(db.String, nullable=False)
 
-class Classes(db.Model):
+class Class(db.Model):
     c_classId = db.Column(db.Integer, primary_key=True)
     c_courseName = db.Column(db.String, unique=True, nullable=False)
     c_teacherId = db.Column(db.Integer, nullable=False)
@@ -43,31 +50,49 @@ class Enrollment(db.Model):
     e_studentId = db.Column(db.Integer, nullable=False)
     e_grade = db.Column(db.Integer, nullable=False)
 
+# Flask Login management
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 
-def isValidLogin(username, password):
-    exists = db.session.query(Users.u_userId).filter_by(u_userName=username, u_password=password).first()
+# Load user
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
-    if exists == None:
-        return False
-
-    return True
-
-
-# root directory
+# Root directory
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('login.html')
 
-@app.route('/login', methods=['POST'])
+
+# User Dashboard
+@app.route('/dashboard', methods=['GET', 'POST'])
+@login_required
+def dashboard():
+    print('Rendering dashboard..')
+    return render_template('dashboard.html')
+
+# Login requests
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
 
-        if isValidLogin(request.json['u_userName'], request.json['u_password']):
-            print('Valid user')
+        user = User.query.filter_by(u_userName=request.json['username']).first()
+
+        if user == None:
+            print('user not found')
+            #flash('User not found')
+        elif not user.check_password(request.json['password']):
+            print('Incorrect password')
+            #flash('incorrect password')
         else:
-            print('Invalid user')
+            login_user(user)
+            print('User logged in!!')
+            return {"redirect": url_for('dashboard')}
 
-    return 'validation complete'
+        return render_template('login.html')
 
+# Run app
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
