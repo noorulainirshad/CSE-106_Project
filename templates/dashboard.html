@@ -2,13 +2,29 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Dashboard</title>
+        <title>Student Dashboard</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="../static/style.css">
         <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     </head>
     <body>
-        <p>Welcome to dashboard</p>
-        
+
+    <div class="card-holder">
+        <h4>University</h4>
+        <div class="header">
+            <p>Welcome {{ name }}</p>
+            <input type="button" onclick="logout()" value="Sign Out">
+        </div>
+
+        <br>
+        <table>
+            <th> Course Name </th>
+            <th> Teacher </th>
+            <th> Time </th>
+            <th> Student Enrolled </th>
+        </table>
+    </div>        
     </body>
+    <script src="{{ url_for('static',filename='script.js') }}" async defer></script>
 </html>

@@ -55,6 +55,9 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+# Globally declare user
+user = None
+
 # Load user
 @login_manager.user_loader
 def load_user(user_id):
@@ -70,7 +73,12 @@ def index():
 @login_required
 def dashboard():
     print('Rendering dashboard..')
-    return render_template('dashboard.html')
+
+    # get student from student dashboard
+
+    student = Student.query.filter_by(s_userId=current_user.u_userId).first()
+
+    return render_template('dashboard.html', name=student.s_name)
 
 # Login requests
 @app.route('/login', methods=['GET', 'POST'])
@@ -92,6 +100,12 @@ def login():
             print('User logged in!!')
             return {"redirect": url_for('dashboard')}
 
+    return {"redirect": url_for('index')}
+
+@app.route('/logout', methods=['POST'])
+@login_required
+def logout():
+    logout_user()
     return {"redirect": url_for('index')}
 
 # Run app

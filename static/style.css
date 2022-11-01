@@ -1,12 +1,13 @@
 .card-holder{
-    /* other base style */
-    width: 25%;
+    width: 50%;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 10%;
-    padding: 80px;  
+    margin-top: 5%;
+    padding: 10px;  
     border-radius: 15px;
-    border-style: dashed; 
+    border-style: dashed;
+    text-align:center;
+
 }
 
 .card {
@@ -18,9 +19,29 @@
     margin-left: auto;
     margin-right: auto;
 }
-
 .flashes {
     text-align: center;
     background-color: lightpink;
     border-radius: 30px;
+}
+
+table{
+    width: 100%;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+table, th{
+    border:1px solid black;
+}
+
+th {
+    text-align: center;
+    width:25%;
+}
+
+.header {
+    display:flex;
+    justify-content: space-between;
+    border-style: dashed;
 }
