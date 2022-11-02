@@ -10,21 +10,38 @@
     </head>
     <body>
 
+   
     <div class="card-holder">
         <h4>University</h4>
         <div class="header">
-            <p>Welcome {{ name }}</p>
+            <p>Welcome {{ name }}!</p>
             <input type="button" onclick="logout()" value="Sign Out">
         </div>
 
-        <br>
-        <table>
-            <th> Course Name </th>
-            <th> Teacher </th>
-            <th> Time </th>
-            <th> Student Enrolled </th>
-        </table>
-    </div>        
+        <!-- Tab functionality -->
+        <div class="tab">
+            <button class="tablinks" onclick="changeTab(event, 'yourCourses')">Your Courses</button>
+            <button class="tablinks" onclick="changeTab(event, 'addCourses')">Add Courses</button>
+        </div>
+
+        <!-- Your Courses Tab -->
+        <div id="yourCourses" class="tabContent">
+            <table>
+                <th> Course Name </th>
+                <th> Teacher </th>
+                <th> Time </th>
+                <th> Student Enrolled </th>
+            </table>
+        </div>
+
+        <!-- Add Courses Tab-->
+        <div id="addCourses" class="tabContent" hidden>
+            <p>under development</p>
+        </div>
+    </div>
+
+
     </body>
-    <script src="{{ url_for('static',filename='script.js') }}" async defer></script>
+    <script src="../static/script.js"></script>
+    <!--<script src="{{ url_for('static',filename='script.js') }}" async defer></script>-->
 </html>

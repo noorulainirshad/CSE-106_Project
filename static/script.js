@@ -26,7 +26,7 @@ function login() {
         .then((body) => {
             
             //client-side redirection
-            window.location.href = body.redirect;
+            window.location.href = body.redirect
         })
         .catch((response) => {
             console.log('login request was unsuccessful')
@@ -40,6 +40,15 @@ function logout() {
     })
     .then((response) => response.json())
     .then((body) => {
-        window.location.href = body.redirect;
+        window.location.href = body.redirect
     })
+}
+
+function changeTab(event, tabName) {
+
+    // hide all tabs
+    $(".tabContent").hide()
+    
+    // show selected tab
+    $(`#${tabName}`).show()
 }
