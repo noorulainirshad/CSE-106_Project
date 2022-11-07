@@ -42,13 +42,13 @@ class Class(db.Model):
     c_teacherId = db.Column(db.Integer, nullable=False)
     c_enrollmentNum = db.Column(db.Integer, nullable=False)
     c_capacity = db.Column(db.Integer, nullable=False)
-    c_time = db.Column(db.DateTime, nullable=False)
+    c_time = db.Column(db.String, nullable=False)
 
 class Enrollment(db.Model):
     e_id = db.Column(db.Integer, primary_key=True)
     e_classId = db.Column(db.Integer, nullable=False)
     e_studentId = db.Column(db.Integer, nullable=False)
-    e_grade = db.Column(db.Integer, nullable=False)
+    e_grade = db.Column(db.Integer, nullable=True)
 
 # Flask Login management
 login_manager = LoginManager()
@@ -77,7 +77,12 @@ def s_dashboard():
     # get student from student dashboard
     student = Student.query.filter_by(s_userId=current_user.u_userId).first()
 
-    return render_template('s_dashboard.html', name=student.s_name)
+    #get all classes available
+    allClasses = Class.query.all()
+
+    classesIn = Enrollment.query.filter_by(e_studentId=student.s_studentId)
+
+    return render_template('s_dashboard.html', name=student.s_name, classes=allClasses, classesIn=classesIn)
 
 # Teacher Dashboard
 @app.route('/t_dashboard', methods=['GET', 'POST'])

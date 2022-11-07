@@ -52,3 +52,7 @@ function changeTab(event, tabName) {
     // show selected tab
     $(`#${tabName}`).show()
 }
+
+function addClass(c_classId) {
+    console.log(c_classId)
+}
