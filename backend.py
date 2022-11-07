@@ -68,17 +68,27 @@ def load_user(user_id):
 def index():
     return render_template('login.html')
 
-# User Dashboard
-@app.route('/dashboard', methods=['GET', 'POST'])
+# Student Dashboard
+@app.route('/s_dashboard', methods=['GET', 'POST'])
 @login_required
-def dashboard():
-    print('Rendering dashboard..')
+def s_dashboard():
+    print('Rendering student dashboard..')
 
     # get student from student dashboard
-
     student = Student.query.filter_by(s_userId=current_user.u_userId).first()
 
-    return render_template('dashboard.html', name=student.s_name)
+    return render_template('s_dashboard.html', name=student.s_name)
+
+# Teacher Dashboard
+@app.route('/t_dashboard', methods=['GET', 'POST'])
+@login_required
+def t_dashboard():
+    print('Rendering teacher dashboard..')
+
+    # get student from student dashboard
+    teacher = Teacher.query.filter_by(t_userId=current_user.u_userId).first()
+
+    return render_template('t_dashboard.html', name=teacher.t_name)
 
 # Login requests
 @app.route('/login', methods=['GET', 'POST'])
@@ -96,9 +106,17 @@ def login():
             print('Incorrect password')
             flash('Incorrect password')
         else:
+            #check if user is student or teacher
             login_user(user)
-            print('User logged in!!')
-            return {"redirect": url_for('dashboard')}
+
+            #check if user is teacher or student
+            teacher = Teacher.query.filter_by(t_userId=user.u_userId).first()
+            if teacher == None:
+                print('student')
+                return {"redirect": url_for('s_dashboard')}
+            else:
+                print('teacher')
+                return {"redirect": url_for('t_dashboard')}
 
     return {"redirect": url_for('index')}
 
