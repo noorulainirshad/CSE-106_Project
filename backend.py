@@ -48,7 +48,7 @@ class Enrollment(db.Model):
     e_id = db.Column(db.Integer, primary_key=True)
     e_classId = db.Column(db.Integer, nullable=False)
     e_studentId = db.Column(db.Integer, nullable=False)
-    e_grade = db.Column(db.Integer, nullable=True)
+    e_grade = db.Column(db.Float, nullable=True)
 
 # Flask Login management
 login_manager = LoginManager()
@@ -130,6 +130,16 @@ def login():
 def logout():
     logout_user()
     return {"redirect": url_for('index')}
+
+@app.route('/addClass/<classId>', methods=['GET', 'POST'])
+@login_required
+def addClass(classId):
+    if request.method == 'POST':
+        #create enrollment for student
+        student = Student.query.filter_by(s_userId=current_user.u_userId).first()
+        #newUser = Enrollment(e_id=1, e_classId=, e_grade=)
+
+    return '200'
 
 # Run app
 if __name__ == '__main__':

@@ -54,5 +54,15 @@ function changeTab(event, tabName) {
 }
 
 function addClass(c_classId) {
+
+    fetch(`http://127.0.0.1:5000/addClass/${c_classId}`, {
+            method: 'POST',
+        })
+        .catch((response) => {
+            console.log('addClass request was unsuccessful')
+        })
+}
+
+function removeClass(c_classId) {
     console.log(c_classId)
 }
