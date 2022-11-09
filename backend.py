@@ -42,13 +42,13 @@ class Class(db.Model):
     c_teacherId = db.Column(db.Integer, nullable=False)
     c_enrollmentNum = db.Column(db.Integer, nullable=False)
     c_capacity = db.Column(db.Integer, nullable=False)
-    c_time = db.Column(db.DateTime, nullable=False)
+    c_time = db.Column(db.String, nullable=False)
 
 class Enrollment(db.Model):
     e_id = db.Column(db.Integer, primary_key=True)
     e_classId = db.Column(db.Integer, nullable=False)
     e_studentId = db.Column(db.Integer, nullable=False)
-    e_grade = db.Column(db.Integer, nullable=False)
+    e_grade = db.Column(db.Float, nullable=True)
 
 # Flask Login management
 login_manager = LoginManager()
@@ -77,7 +77,14 @@ def s_dashboard():
     # get student from student dashboard
     student = Student.query.filter_by(s_userId=current_user.u_userId).first()
 
-    return render_template('s_dashboard.html', name=student.s_name)
+    #get all classes available
+    allClasses = Class.query.all()
+
+    classesIn = [i.e_classId for i in Enrollment.query.filter_by(e_studentId=student.s_studentId).all()]
+
+    enrolledClasses = db.session.query(Class).filter(Class.c_classId.in_(classesIn)).all()
+
+    return render_template('s_dashboard.html', name=student.s_name, classes=allClasses, classesIn=classesIn, enrolledClasses=enrolledClasses)
 
 # Teacher Dashboard
 @app.route('/t_dashboard', methods=['GET', 'POST'])
@@ -125,6 +132,50 @@ def login():
 def logout():
     logout_user()
     return {"redirect": url_for('index')}
+
+@app.route('/addClass/<classId>', methods=['GET', 'POST'])
+@login_required
+def addClass(classId):
+    if request.method == 'POST':
+
+        #check that capacity in class
+        course = Class.query.filter_by(c_classId=classId).first()
+        student = Student.query.filter_by(s_userId=current_user.u_userId).first()
+        enrollment = Enrollment.query.filter_by(e_classId=classId, e_studentId=student.s_studentId).first()
+
+
+        if((course.c_enrollmentNum < course.c_capacity ) and (enrollment == None)):
+
+            #create enrollment for student
+            allEnrollment = Enrollment.query.all()
+            e_id = len(allEnrollment) + 1
+            newEnrollment = Enrollment(e_id=e_id, e_classId=classId, e_studentId=student.s_studentId, e_grade=100.0)
+            db.session.add(newEnrollment)
+
+            course.c_enrollmentNum += 1
+
+            db.session.commit()
+
+    return '200'
+
+@app.route('/removeClass/<classId>', methods=['GET', 'POST'])
+@login_required
+def removeClass(classId):
+    if request.method == 'POST':
+
+        course = Class.query.filter_by(c_classId=classId).first()
+
+        student = Student.query.filter_by(s_userId=current_user.u_userId).first()
+        
+        enrollment = Enrollment.query.filter_by(e_studentId=student.s_studentId).first()
+
+        # check if student is enrolled in class
+        if (enrollment != None):
+            db.session.delete(enrollment)
+            course.c_enrollmentNum -= 1
+            db.session.commit()
+
+    return '200'
 
 # Run app
 if __name__ == '__main__':
