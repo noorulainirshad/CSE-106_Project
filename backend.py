@@ -140,11 +140,13 @@ def addClass(classId):
 
         #check that capacity in class
         course = Class.query.filter_by(c_classId=classId).first()
+        student = Student.query.filter_by(s_userId=current_user.u_userId).first()
+        enrollment = Enrollment.query.filter_by(e_classId=classId, e_studentId=student.s_studentId).first()
 
-        if(course.c_enrollmentNum < course.c_capacity):
+
+        if((course.c_enrollmentNum < course.c_capacity ) and (enrollment == None)):
 
             #create enrollment for student
-            student = Student.query.filter_by(s_userId=current_user.u_userId).first()
             allEnrollment = Enrollment.query.all()
             e_id = len(allEnrollment) + 1
             newEnrollment = Enrollment(e_id=e_id, e_classId=classId, e_studentId=student.s_studentId, e_grade=100.0)
@@ -152,6 +154,25 @@ def addClass(classId):
 
             course.c_enrollmentNum += 1
 
+            db.session.commit()
+
+    return '200'
+
+@app.route('/removeClass/<classId>', methods=['GET', 'POST'])
+@login_required
+def removeClass(classId):
+    if request.method == 'POST':
+
+        course = Class.query.filter_by(c_classId=classId).first()
+
+        student = Student.query.filter_by(s_userId=current_user.u_userId).first()
+        
+        enrollment = Enrollment.query.filter_by(e_studentId=student.s_studentId).first()
+
+        # check if student is enrolled in class
+        if (enrollment != None):
+            db.session.delete(enrollment)
+            course.c_enrollmentNum -= 1
             db.session.commit()
 
     return '200'
