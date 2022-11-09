@@ -31,6 +31,21 @@
                 <th> Teacher </th>
                 <th> Time </th>
                 <th> Student Enrolled </th>
+
+                {% block enrolledClasses %}
+
+                    {% for class in enrolledClasses %}
+
+                        <tr>
+                            <td> {{ class.c_courseName }}</td>
+                            <td> {{ class.c_teacherId }}</td>
+                            <td> {{ class.c_time }}</td>
+                            <td> {{ class.c_enrollmentNum }} / {{ class.c_capacity }}</td>
+                        </tr>
+
+                    {% endfor %}
+
+                {% endblock %}
             </table>
         </div>
 
@@ -45,9 +60,9 @@
                     <th> Add Class</th>
                 </tr>
 
-                {% block content %}
+                {% block allClasses %}
                         <!-- display all courses-->
-                        {% for class in classes%}
+                        {% for class in classes %}
 
                             <tr>
                                 <td> {{ class.c_courseName }}</td>
@@ -56,12 +71,12 @@
                                 <td> {{ class.c_enrollmentNum }} / {{ class.c_capacity }}</td>
 
                                 <!-- If the student is not enrolled in class then show option to add-->
-                                {% if class.c_classId not in classesIn.e_classId %}
+                                {% if class.c_classId not in classesIn %}
                                 <td><input type="button" value="+" onclick="addClass( '{{ class.c_classId }}' )"></td>
 
                                 <!-- Else show option to remove-->
                                 {% else  %}
-                                <td><input type="button" value="-" onclick="removeClass('{{class.c_classId}}')"></td>
+                                <td><input type="button" value="-" onclick="removeClass('{{ class.c_classId }}')"></td>
                                 {% endif %}
                             </tr>
                         {% endfor %}

@@ -80,9 +80,11 @@ def s_dashboard():
     #get all classes available
     allClasses = Class.query.all()
 
-    classesIn = Enrollment.query.filter_by(e_studentId=student.s_studentId)
+    classesIn = [i.e_classId for i in Enrollment.query.filter_by(e_studentId=student.s_studentId).all()]
 
-    return render_template('s_dashboard.html', name=student.s_name, classes=allClasses, classesIn=classesIn)
+    enrolledClasses = db.session.query(Class).filter(Class.c_classId.in_(classesIn)).all()
+
+    return render_template('s_dashboard.html', name=student.s_name, classes=allClasses, classesIn=classesIn, enrolledClasses=enrolledClasses)
 
 # Teacher Dashboard
 @app.route('/t_dashboard', methods=['GET', 'POST'])
@@ -135,9 +137,22 @@ def logout():
 @login_required
 def addClass(classId):
     if request.method == 'POST':
-        #create enrollment for student
-        student = Student.query.filter_by(s_userId=current_user.u_userId).first()
-        #newUser = Enrollment(e_id=1, e_classId=, e_grade=)
+
+        #check that capacity in class
+        course = Class.query.filter_by(c_classId=classId).first()
+
+        if(course.c_enrollmentNum < course.c_capacity):
+
+            #create enrollment for student
+            student = Student.query.filter_by(s_userId=current_user.u_userId).first()
+            allEnrollment = Enrollment.query.all()
+            e_id = len(allEnrollment) + 1
+            newEnrollment = Enrollment(e_id=e_id, e_classId=classId, e_studentId=student.s_studentId, e_grade=100.0)
+            db.session.add(newEnrollment)
+
+            course.c_enrollmentNum += 1
+
+            db.session.commit()
 
     return '200'
 
