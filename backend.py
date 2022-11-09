@@ -155,7 +155,7 @@ def addClass(classId):
             course.c_enrollmentNum += 1
 
             db.session.commit()
-
+        
     return '200'
 
 @app.route('/removeClass/<classId>', methods=['GET', 'POST'])
