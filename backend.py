@@ -84,7 +84,7 @@ def s_dashboard():
 
     enrolledClasses = db.session.query(Class).filter(Class.c_classId.in_(classesIn)).all()
 
-    return render_template('s_dashboard.html', name=student.s_name, classes=allClasses, classesIn=classesIn, enrolledClasses=enrolledClasses)
+    return render_template('s_dashboard.html', name=student.s_name, classes=allClasses, classesIn=classesIn, enrolledClasses=enrolledClasses, Teacher=Teacher)
 
 # Teacher Dashboard
 @app.route('/t_dashboard', methods=['GET', 'POST'])

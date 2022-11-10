@@ -38,7 +38,7 @@
 
                         <tr>
                             <td> {{ class.c_courseName }}</td>
-                            <td> {{ class.c_teacherId }}</td>
+                            <td> {{ Teacher.query.filter_by(t_teacherId=class.c_teacherId).first().t_name }}</td>
                             <td> {{ class.c_time }}</td>
                             <td> {{ class.c_enrollmentNum }} / {{ class.c_capacity }}</td>
                         </tr>
@@ -66,7 +66,7 @@
 
                             <tr>
                                 <td> {{ class.c_courseName }}</td>
-                                <td> {{ class.c_teacherId }}</td>
+                                <td> {{ Teacher.query.filter_by(t_teacherId=class.c_teacherId).first().t_name }}</td>
                                 <td> {{ class.c_time }}</td>
                                 <td> {{ class.c_enrollmentNum }} / {{ class.c_capacity }}</td>
 
