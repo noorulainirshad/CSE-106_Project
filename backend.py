@@ -96,7 +96,7 @@ def t_dashboard():
 
     # get student from student dashboard
     teacher = Teacher.query.filter_by(t_userId=current_user.u_userId).first()
-    courseList = Class.query.filter_by(c_teacherId = teacher.t_userId).all()
+    courseList = Class.query.filter_by(c_teacherId = teacher.t_teacherId).all()
     allClasses = Class.query.all()
     if request.method == 'POST':
         return render_template('t_dashboard.html', name=teacher.t_name, classes = courseList, allClasses=allClasses)
