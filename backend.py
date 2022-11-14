@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, request, abort, render_template, flash, make_response
+from flask import Flask, redirect, url_for, request, abort, render_template, flash, make_response, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_manager, LoginManager, login_required, login_user, logout_user, current_user
 from flask_cors import CORS
@@ -43,6 +43,7 @@ class Class(db.Model):
     c_enrollmentNum = db.Column(db.Integer, nullable=False)
     c_capacity = db.Column(db.Integer, nullable=False)
     c_time = db.Column(db.String, nullable=False)
+    
 
 class Enrollment(db.Model):
     e_id = db.Column(db.Integer, primary_key=True)
@@ -83,7 +84,8 @@ def s_dashboard():
     classesIn = [i.e_classId for i in Enrollment.query.filter_by(e_studentId=student.s_studentId).all()]
 
     enrolledClasses = db.session.query(Class).filter(Class.c_classId.in_(classesIn)).all()
-
+    if request.method == 'POST':
+        return render_template('s_dashboard.html', name=student.s_name, classes=allClasses, classesIn=classesIn, enrolledClasses=enrolledClasses, Teacher=Teacher)
     return render_template('s_dashboard.html', name=student.s_name, classes=allClasses, classesIn=classesIn, enrolledClasses=enrolledClasses, Teacher=Teacher)
 
 # Teacher Dashboard
@@ -94,8 +96,18 @@ def t_dashboard():
 
     # get student from student dashboard
     teacher = Teacher.query.filter_by(t_userId=current_user.u_userId).first()
+    courseList = Class.query.filter_by(c_teacherId = teacher.t_userId).all()
+    allClasses = Class.query.all()
+    if request.method == 'POST':
+        return render_template('t_dashboard.html', name=teacher.t_name, classes = courseList, allClasses=allClasses)
+    return render_template('t_dashboard.html', name=teacher.t_name, classes = courseList, allClasses = allClasses)
 
-    return render_template('t_dashboard.html', name=teacher.t_name)
+@app.route('/t_dashboard/class_roster', methods=['GET', 'POST'])
+@login_required
+def class_roster():
+    if request.method == 'POST':
+        return render_template('class_roster.html')
+    return render_template('class_roster.html')
 
 # Login requests
 @app.route('/login', methods=['GET', 'POST'])
