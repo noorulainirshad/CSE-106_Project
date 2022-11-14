@@ -96,7 +96,7 @@ def t_dashboard():
 
     # get student from student dashboard
     teacher = Teacher.query.filter_by(t_userId=current_user.u_userId).first()
-    courseList = Class.query.filter_by(c_teacherId = teacher.t_userId).all()
+    courseList = Class.query.filter_by(c_teacherId = teacher.t_teacherId).all()
     allClasses = Class.query.all()
     if request.method == 'POST':
         return render_template('t_dashboard.html', name=teacher.t_name, classes = courseList, allClasses=allClasses)
@@ -164,7 +164,7 @@ def addClass(classId):
             newEnrollment = Enrollment(e_id=e_id, e_classId=classId, e_studentId=student.s_studentId, e_grade=100.0)
             db.session.add(newEnrollment)
 
-            course.c_enrollmentNum += 1
+            course.c_enrollmentNum = 1
 
             db.session.commit()
         
@@ -184,7 +184,7 @@ def removeClass(classId):
         # check if student is enrolled in class
         if (enrollment != None):
             db.session.delete(enrollment)
-            course.c_enrollmentNum -= 1
+            course.c_enrollmentNum = 0
             db.session.commit()
 
     return '200'
